@@ -203,6 +203,13 @@
         .result-table td { padding: 15px; border-bottom: 2px dashed #bcaaa4; font-size: 1.1rem; }
         .result-table td:first-child { text-align: left; color: #5d4037; font-weight: bold; }
         .result-table td:last-child { text-align: right; font-weight: 900; color: #2e4233; font-size: 1.5rem;}
+        
+        .hud-info {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5px; margin-bottom: 5px;
+        }
+        .score-board { font-size: 1.1rem; color: #2e4233; font-weight: 900; background: #a3c2a9; padding: 4px 12px; border-radius: 12px; }
+        .lives-board { font-size: 1.3rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); letter-spacing: 2px; background: #fffcf4; padding: 4px 10px; border-radius: 12px; border: 2px dashed #bcaaa4; }
     </style>
 </head>
 <body>
@@ -211,12 +218,17 @@
         
         <!-- ส่วนหัวบอกโจทย์สเกล -->
         <div class="header-board">
-            <!-- จัดเรียงปุ่มและชื่อเกมให้อยู่ด้านบน -->
             <div class="header-top">
                 <span class="game-name-small">Scale Drip Café ☕</span>
                 <button class="btn-pause" onclick="pauseGame()">⏸</button>
             </div>
             <h1 class="huge-target" id="targetScaleText">C Major</h1>
+        </div>
+
+        <!-- แถบแสดงคะแนนและหัวใจ -->
+        <div class="hud-info">
+            <div class="score-board">SCORE: <span id="scoreDisplay">0</span></div>
+            <div class="lives-board" id="livesDisplay">❤️❤️❤️</div>
         </div>
 
         <!-- กระดานเล่นเกม (กระดานดำคาเฟ่สีเขียว) -->
@@ -229,7 +241,7 @@
 
         <!-- แถบแสดงโน้ตที่เก็บได้ -->
         <div class="collected-bar" id="collectedBar">
-            <!-- จะถูกเติมด้วย Javascript ตามจำนวนโน้ตในสเกล (7 ช่อง) -->
+            <!-- จะถูกเติมด้วย Javascript -->
         </div>
 
         <!-- หน้าต่างเริ่มเกม -->
@@ -242,7 +254,7 @@
                 <p style="font-size: 0.95rem; color: #5d4037; font-weight: 700;">เลื่อนถ้วยดริปไปซ้ายขวา</p>
                 <p style="font-size: 0.95rem; color: #5d4037; font-weight: 700;">เพื่อรับ <b>"หยดน้ำ"</b> โน้ตในสเกล</p>
                 <p style="font-size: 0.85rem; color: #e57373; font-weight: 700; margin-top: 10px;">
-                    (ระวังอย่ารับโน้ตผิด หรือโน้ตที่ซ้ำนะ!)
+                    ❤️ มีหัวใจให้ 3 ดวง หากรับผิดหรือปล่อยให้โน้ตที่ถูกร่วงไป หัวใจจะลด!
                 </p>
             </div>
             <button class="btn-action" onclick="startGame()">เริ่มดริปกาแฟ ▶</button>
@@ -312,28 +324,20 @@
 
         // ---------------- 📚 ฐานข้อมูลเฉพาะ 4 สเกลหลัก ----------------
         const scalesData = [
-            // Major Scales
             { name: "C Major", notes: ["C", "D", "E", "F", "G", "A", "B"] },
             { name: "G Major", notes: ["G", "A", "B", "C", "D", "E", "F#"] },
             { name: "F Major", notes: ["F", "G", "A", "Bb", "C", "D", "E"] },
-            
-            // Natural Minor Scales
             { name: "A Natural Minor", notes: ["A", "B", "C", "D", "E", "F", "G"] },
             { name: "E Natural Minor", notes: ["E", "F#", "G", "A", "B", "C", "D"] },
             { name: "D Natural Minor", notes: ["D", "E", "F", "G", "A", "Bb", "C"] },
-            
-            // Harmonic Minor Scales (Raised 7th)
             { name: "A Harmonic Minor", notes: ["A", "B", "C", "D", "E", "F", "G#"] },
             { name: "E Harmonic Minor", notes: ["E", "F#", "G", "A", "B", "C", "D#"] },
             { name: "D Harmonic Minor", notes: ["D", "E", "F", "G", "A", "Bb", "C#"] },
-            
-            // Melodic Minor Scales (Raised 6th & 7th)
             { name: "A Melodic Minor", notes: ["A", "B", "C", "D", "E", "F#", "G#"] },
             { name: "E Melodic Minor", notes: ["E", "F#", "G", "A", "B", "C#", "D#"] },
             { name: "D Melodic Minor", notes: ["D", "E", "F", "G", "A", "B", "C#"] }
         ];
 
-        // โน้ตสำหรับสุ่มเป็นตัวหลอกหรือตัวถูก
         const allNotes = ["C", "C#", "D", "D#", "Eb", "E", "F", "F#", "G", "G#", "Ab", "A", "Bb", "B"];
 
         let currentScaleInfo = null;
@@ -342,11 +346,15 @@
         let activeNotes = [];       
         
         let score = 0;
+        let lives = 3;
         let level = 1;
         let gameLoopId;
         let spawnId;
-        let fallSpeed = 2.5;        
-        let spawnRate = 1200;       
+        
+        // 🐢 ปรับให้เริ่มช้าๆ ค่อยๆ ไปตามที่สั่งครับ
+        let fallSpeed = 1.2;        
+        let spawnRate = 1800;       
+        
         let isTransitioning = false; 
         let isPaused = false; 
 
@@ -357,6 +365,8 @@
         const levelUpMsg = document.getElementById('levelUpMsg');
         const pauseModal = document.getElementById('pauseModal');
         const collectedBar = document.getElementById('collectedBar');
+        const scoreDisplay = document.getElementById('scoreDisplay');
+        const livesDisplay = document.getElementById('livesDisplay');
 
         // ---------------- 🎮 ระบบควบคุมถ้วยดริปเปอร์ ----------------
         let glassX = gameArea.clientWidth / 2;
@@ -442,16 +452,30 @@
             
             activeNotes.forEach(n => n.element.remove());
             activeNotes = [];
-            fallSpeed = 2.5; 
-            score = 0;
-            level = 1;
-            loadNewScale();
+            startGameInit();
         }
 
         function backToStartScreen() {
             playSound(popSound);
             document.getElementById('gameOverScreen').style.display = 'none';
             document.getElementById('startOverlay').style.display = 'flex';
+        }
+
+        function updateUI() {
+            scoreDisplay.textContent = score;
+            livesDisplay.textContent = "❤️".repeat(Math.max(0, lives)) + "🤍".repeat(Math.max(0, 3 - lives));
+        }
+
+        function triggerGameOver() {
+            isPaused = true;
+            cancelAnimationFrame(gameLoopId);
+            clearInterval(spawnId);
+            
+            setTimeout(() => {
+                document.getElementById('finalScore').textContent = score;
+                document.getElementById('finalLevel').textContent = `${level - 1} สเกล`;
+                document.getElementById('gameOverScreen').style.display = 'flex';
+            }, 500);
         }
 
         // ---------------- 🚀 ฟังก์ชันหลักของเกม ----------------
@@ -461,13 +485,22 @@
             
             activeNotes.forEach(n => n.element.remove());
             activeNotes = [];
+            startGameInit();
+        }
+        
+        function startGameInit() {
             score = 0;
+            lives = 3;
             level = 1;
-            fallSpeed = 2.5;
+            fallSpeed = 1.2;
+            spawnRate = 1800;
             isPaused = false;
-
+            
+            updateUI();
             loadNewScale();
             gameLoopId = requestAnimationFrame(updateGame);
+            
+            clearInterval(spawnId);
             spawnId = setInterval(spawnNote, spawnRate);
         }
 
@@ -482,7 +515,6 @@
             createSlotsUI();
         }
 
-        // สร้างกล่องใส่โน้ต 7 กล่อง
         function createSlotsUI() {
             collectedBar.innerHTML = '';
             for (let i = 0; i < targetNotes.length; i++) {
@@ -554,6 +586,7 @@
                     const noteCenterY = noteObj.y + noteRadius;
                     const noteCenterX = noteObj.x;
 
+                    // ตรวจจับการชน (เก็บโน้ต)
                     if (noteCenterY >= glassTop && noteCenterY <= glassBottom) {
                         if (noteCenterX >= glassLeft && noteCenterX <= glassRight) {
                             handleCatch(noteObj, i);
@@ -562,7 +595,24 @@
                         }
                     }
 
+                    // ปล่อยให้ร่วงหายไป (เช็คว่าพลาดของดีหรือไม่)
                     if (noteObj.y > areaHeight) {
+                        const isTarget = targetNotes.includes(noteObj.text);
+                        const alreadyCollected = collectedNotes.includes(noteObj.text);
+                        
+                        // ถ้าหล่นโน้ตที่ใช่และยังไม่มี = เสียหัวใจ 1 ดวง
+                        if (isTarget && !alreadyCollected) {
+                            lives--;
+                            updateUI();
+                            playSound(errorSound);
+                            boardWrapper.classList.add('flash-red');
+                            setTimeout(() => boardWrapper.classList.remove('flash-red'), 300);
+                            
+                            if (lives <= 0) {
+                                triggerGameOver();
+                            }
+                        }
+
                         noteObj.element.remove();
                         activeNotes.splice(i, 1);
                         i--;
@@ -583,7 +633,7 @@
             const alreadyCollected = collectedNotes.includes(noteObj.text);
 
             if (isTarget && !alreadyCollected) {
-                // เก็บสำเร็จ
+                // เก็บสำเร็จ ถูกต้อง
                 playSound(popSound);
                 collectedNotes.push(noteObj.text); 
                 score += 10;
@@ -593,22 +643,22 @@
                     levelComplete();
                 }
             } else {
-                // พลาด (โน้ตผิด หรือ โน้ตซ้ำ) -> จบเกม
+                // พลาด! (เก็บโน้ตผิด หรือโน้ตที่ซ้ำ) -> เสียหัวใจ 1 ดวง
                 playSound(errorSound);
                 boardWrapper.classList.add('flash-red');
                 glass.classList.add('shake');
                 
-                isPaused = true;
-                cancelAnimationFrame(gameLoopId);
-                clearInterval(spawnId);
+                lives--;
+                updateUI();
                 
                 setTimeout(() => {
                     boardWrapper.classList.remove('flash-red');
                     glass.classList.remove('shake');
-                    document.getElementById('finalScore').textContent = score;
-                    document.getElementById('finalLevel').textContent = `${level - 1} สเกล`;
-                    document.getElementById('gameOverScreen').style.display = 'flex';
-                }, 500);
+                }, 300);
+
+                if (lives <= 0) {
+                    triggerGameOver();
+                }
             }
         }
 
@@ -622,7 +672,12 @@
             activeNotes.forEach(n => n.element.remove());
             activeNotes = [];
 
-            fallSpeed += 0.2; // เพิ่มความเร็วในการร่วง
+            // ความยากเพิ่มขึ้นเรื่อยๆ
+            fallSpeed += 0.15; 
+            spawnRate = Math.max(800, spawnRate - 100);
+            
+            clearInterval(spawnId);
+            spawnId = setInterval(spawnNote, spawnRate);
 
             setTimeout(() => {
                 levelUpMsg.classList.remove('show');
