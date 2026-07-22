@@ -72,6 +72,14 @@
         }
         .btn-pause:active { transform: translateY(5px); box-shadow: 0 0 0 transparent; }
 
+        /* HUD - หัวใจและคะแนน */
+        .hud-info {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            padding: 0 5px; margin-bottom: 5px;
+        }
+        .score-board { font-size: 1.1rem; color: #2e4233; font-weight: 900; background: #a3c2a9; padding: 4px 12px; border-radius: 12px; }
+        .lives-board { font-size: 1.3rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); letter-spacing: 2px; background: #fffcf4; padding: 4px 10px; border-radius: 12px; border: 2px dashed #bcaaa4; }
+
         /* ---------------- พื้นที่เล่นเกม (Green Chalkboard Area) ---------------- */
         .board-wrapper {
             position: relative; width: 100%; flex: 1; min-height: 0;
@@ -143,27 +151,27 @@
         /* ---------------- ☕ เมนูเริ่มและหยุดเกม ---------------- */
         .overlay-screen {
             position: absolute; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(244, 235, 226, 0.95); z-index: 100; display: none;
+            background: rgba(46, 30, 24, 0.82); z-index: 100; display: none;
             flex-direction: column; align-items: center; justify-content: center;
             backdrop-filter: blur(8px); text-align: center; padding: 20px;
         }
-        .overlay-title { font-size: 2.3rem; color: #2e4233; font-weight: 900; margin-bottom: 15px; text-shadow: 0px 3px 0px #fff; line-height: 1.2;}
+        .overlay-title { font-size: 2.3rem; color: #fff; font-weight: 900; margin-bottom: 15px; text-shadow: 0px 3px 0px #2e4233; line-height: 1.2;}
         
         .start-instruction-box {
             background: #fff; padding: 22px 18px; 
-            border-radius: 25px; width: 90%; text-align: center; margin-bottom: 22px;
-            box-shadow: 0 10px 0 #f4e1d2, 0 20px 25px rgba(93, 64, 55, 0.1);
+            border-radius: 25px; width: 90%; text-align: center; margin-bottom: 18px;
+            box-shadow: 0 10px 0 #f4e1d2, 0 20px 25px rgba(0, 0, 0, 0.25);
             border: 3px dashed #a3c2a9;
         }
 
         .btn-action {
             padding: 15px 30px; font-size: 1.25rem; font-weight: 900; color: #fff;
             background: #2e4233; border: none; border-radius: 30px;
-            cursor: pointer; box-shadow: 0 8px 0 #1b2e22, 0 12px 18px rgba(0, 0, 0, 0.2); transition: all 0.15s; width: 85%; max-width: 250px; margin-bottom: 12px;
+            cursor: pointer; box-shadow: 0 8px 0 #1b2e22, 0 12px 18px rgba(0, 0, 0, 0.3); transition: all 0.15s; width: 85%; max-width: 250px; margin-bottom: 12px;
         }
         .btn-action:active { transform: translateY(8px); box-shadow: 0 0px 0 transparent; }
         
-        .btn-secondary { background: #fff; color: #2e4233; box-shadow: 0 8px 0 #e6d8ce, 0 12px 18px rgba(93, 64, 55, 0.1); font-size: 1.15rem; }
+        .btn-secondary { background: #fff; color: #2e4233; box-shadow: 0 8px 0 #e6d8ce, 0 12px 18px rgba(0, 0, 0, 0.2); font-size: 1.15rem; }
 
         /* Level Up Animation */
         .level-up-text {
@@ -179,6 +187,59 @@
             15% { transform: translate(-50%, -50%) scale(1.1); opacity: 1; } 
             85% { transform: translate(-50%, -50%) scale(1); opacity: 1; } 
             100% { transform: translate(-50%, -80%) scale(0.8); opacity: 0; } 
+        }
+
+        /* ---------------- 📖 กล่องคู่มือการเล่น (How to Play Modal) ---------------- */
+        .guide-modal {
+            position: relative; width: 100%; max-width: 360px;
+            display: flex; flex-direction: column; align-items: center;
+        }
+
+        .guide-header {
+            width: 100%; display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 20px;
+        }
+        .guide-title {
+            font-size: 2.2rem; color: #78c850; font-weight: 900;
+            text-shadow: 0 3px 0 #1b2e22, 0 0 12px rgba(120, 200, 80, 0.4);
+        }
+
+        /* ปุ่มกากบาท X สีแดง */
+        .btn-close-x {
+            width: 50px; height: 50px; background: #ff5252;
+            border: 4px solid #fff; border-radius: 50%;
+            color: #fff; font-size: 1.8rem; font-weight: 900;
+            cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 6px 15px rgba(0,0,0,0.4);
+            transition: all 0.15s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            -webkit-tap-highlight-color: transparent;
+        }
+        .btn-close-x:active { transform: scale(0.9); }
+
+        /* แผ่นแผนภาพวาดคำอธิบายวิธีเล่น */
+        .guide-diagram-canvas {
+            width: 100%; height: 380px; position: relative;
+            background: rgba(0,0,0,0.15); border-radius: 25px;
+            border: 2px dashed rgba(255,255,255,0.2); margin-bottom: 15px;
+        }
+
+        /* หยดน้ำตัวอย่างในคู่มือ */
+        .demo-drop {
+            position: absolute; width: 42px; height: 42px; background: #e0f7fa;
+            border-radius: 0 50% 50% 50%; color: #006064; font-size: 0.95rem; font-weight: 900;
+            display: flex; align-items: center; justify-content: center;
+            border: 2px solid #b2ebf2; transform: rotate(45deg);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.3);
+        }
+        .demo-drop span { transform: rotate(-45deg); }
+
+        /* SVG ลูกศรชี้ */
+        .arrow-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
+
+        /* กล่องข้อความลายมือชอล์ก */
+        .chalk-text-box {
+            position: absolute; color: #fff; text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+            font-weight: 700; line-height: 1.35; text-align: left;
         }
 
         /* ---------------- 📖 กล่องทบทวนบทเรียน ---------------- */
@@ -203,13 +264,6 @@
         .result-table td { padding: 15px; border-bottom: 2px dashed #bcaaa4; font-size: 1.1rem; }
         .result-table td:first-child { text-align: left; color: #5d4037; font-weight: bold; }
         .result-table td:last-child { text-align: right; font-weight: 900; color: #2e4233; font-size: 1.5rem;}
-        
-        .hud-info {
-            width: 100%; display: flex; justify-content: space-between; align-items: center;
-            padding: 0 5px; margin-bottom: 5px;
-        }
-        .score-board { font-size: 1.1rem; color: #2e4233; font-weight: 900; background: #a3c2a9; padding: 4px 12px; border-radius: 12px; }
-        .lives-board { font-size: 1.3rem; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.1)); letter-spacing: 2px; background: #fffcf4; padding: 4px 10px; border-radius: 12px; border: 2px dashed #bcaaa4; }
     </style>
 </head>
 <body>
@@ -248,7 +302,7 @@
         <div id="startOverlay" class="overlay-screen" style="display: flex;">
             <h1 class="overlay-title">Scale Drip ☕</h1>
             <div class="start-instruction-box">
-                <p style="font-size: 1.2rem; color: #2e4233; font-weight: 900; line-height: 1.5; margin-bottom:10px;">
+                <p style="font-size: 1.25rem; color: #2e4233; font-weight: 900; line-height: 1.5; margin-bottom:10px;">
                     🌱 วิธีการชงกาแฟสเกล
                 </p>
                 <p style="font-size: 0.95rem; color: #5d4037; font-weight: 700;">เลื่อนถ้วยดริปไปซ้ายขวา</p>
@@ -258,7 +312,62 @@
                 </p>
             </div>
             <button class="btn-action" onclick="startGame()">เริ่มดริปกาแฟ ▶</button>
-            <button class="btn-action btn-secondary" onclick="openReview()">ทบทวน 4 สเกล 📖</button>
+            <button class="btn-action btn-secondary" onclick="openHowToPlay()">วิธีการเล่น 📖</button>
+            <button class="btn-action btn-secondary" onclick="openReview()">ทบทวน 4 สเกล 🎼</button>
+        </div>
+
+        <!-- 📖 หน้าต่างคู่มือการเล่น (How to Play - ตามรูปภาพสเก็ตช์) -->
+        <div id="howToPlayScreen" class="overlay-screen">
+            <div class="guide-modal">
+                <div class="guide-header">
+                    <span class="guide-title">คู่มือการเล่น</span>
+                    <button class="btn-close-x" onclick="closeHowToPlay()">✕</button>
+                </div>
+
+                <!-- แผ่นวาดภาพจำลองวิธีเล่น -->
+                <div class="guide-diagram-canvas">
+                    <!-- 1. กลุ่มหยดน้ำ -->
+                    <div class="demo-drop" style="top: 20px; left: 25px;"><span>Bb</span></div>
+                    <div class="demo-drop" style="top: 45px; left: 55px;"><span>C</span></div>
+                    <div class="demo-drop" style="top: 30px; left: 95px;"><span>G</span></div>
+
+                    <div class="chalk-text-box" style="top: 70px; left: 20px; font-size: 1.15rem;">
+                        โน้ต หยดน้ำ<br><span style="font-size: 1.3rem;">หยดลงมา</span>
+                    </div>
+
+                    <!-- 2. แก้วกาแฟ -->
+                    <div id="demoGlass" style="position: absolute; top: 150px; right: 25px; width: 65px; height: 55px; background: #fffcf4; border-radius: 4px 4px 30px 30px; box-shadow: 0 6px 0 #8d6e63;">
+                        <div style="position: absolute; top: 12px; right: -12px; width: 16px; height: 24px; border: 5px solid #fffcf4; border-left: none; border-radius: 0 12px 12px 0; box-shadow: 2px 3px 0 #8d6e63;"></div>
+                        <div style="position: absolute; top: -8px; left: -8px; width: calc(100% + 16px); height: 16px; background: #5d4037; border-radius: 50%;"></div>
+                    </div>
+
+                    <div class="chalk-text-box" style="top: 195px; right: 15px; font-size: 1.15rem; text-align: right; width: 220px;">
+                        ใช้แก้วกาแฟ<br>เลื่อน ซ้าย-ขวา<br>เพื่อรับโน้ตหยดน้ำ
+                    </div>
+
+                    <!-- 3. แผงหัวใจ 3 ดวง -->
+                    <div style="position: absolute; bottom: 65px; left: 20px; background: #fffcf4; padding: 6px 14px; border-radius: 16px; border: 2px dashed #bcaaa4; font-size: 1.2rem; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+                        ❤️❤️❤️
+                    </div>
+
+                    <div class="chalk-text-box" style="bottom: 15px; left: 20px; font-size: 1rem; width: 260px;">
+                        มีหัวใจให้ 3 ดวง<br>หากตอบผิดหัวใจจะลด
+                    </div>
+
+                    <!-- SVG เส้นลูกศรชี้ตามรูปสเก็ตช์ -->
+                    <svg class="arrow-svg" viewBox="0 0 360 380">
+                        <defs>
+                            <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#8bc34a" />
+                            </marker>
+                        </defs>
+                        <!-- โน้ตร่วงลงแก้ว -->
+                        <path d="M 145, 45 Q 230, 45 220, 130" fill="none" stroke="#8bc34a" stroke-width="4" stroke-dasharray="6,4" marker-end="url(#arrow)" />
+                        <!-- แก้วชี้ลงหัวใจ -->
+                        <path d="M 230, 275 Q 230, 315 155, 310" fill="none" stroke="#8bc34a" stroke-width="4" stroke-dasharray="6,4" marker-end="url(#arrow)" />
+                    </svg>
+                </div>
+            </div>
         </div>
 
         <!-- 📖 หน้าต่างทบทวนเมนู -->
@@ -289,10 +398,11 @@
 
         <!-- หน้าต่างหยุดเกม -->
         <div id="pauseModal" class="overlay-screen">
-            <h1 class="overlay-title" style="color: #2e4233;">พักจิบชา 🍵</h1>
+            <h1 class="overlay-title" style="color: #fff;">พักจิบชา 🍵</h1>
             <div style="display: flex; flex-direction: column; width:100%; align-items:center;">
                 <button class="btn-action" onclick="resumeGame()">▶ ลุยงานต่อ</button>
-                <button class="btn-action btn-secondary" onclick="openReviewFromPause()">ทบทวนสเกล 📖</button>
+                <button class="btn-action btn-secondary" onclick="openHowToPlayFromPause()">วิธีการเล่น 📖</button>
+                <button class="btn-action btn-secondary" onclick="openReviewFromPause()">ทบทวนสเกล 🎼</button>
                 <button class="btn-action btn-secondary" onclick="restartGame()">🔄 เททิ้งเริ่มใหม่</button>
             </div>
         </div>
@@ -351,7 +461,6 @@
         let gameLoopId;
         let spawnId;
         
-        // 🐢 ปรับให้เริ่มช้าๆ ค่อยๆ ไปตามที่สั่งครับ
         let fallSpeed = 1.2;        
         let spawnRate = 1800;       
         
@@ -408,7 +517,30 @@
         window.addEventListener('touchmove', handleDragMove, { passive: false });
         window.addEventListener('touchend', handleDragEnd);
 
-        // ---------------- 📖 เมนูทบทวน ----------------
+        // ---------------- 📖 เมนูคู่มือการเล่น (How to Play) ----------------
+        function openHowToPlay() {
+            playSound(popSound);
+            document.getElementById('startOverlay').style.display = 'none';
+            document.getElementById('howToPlayScreen').style.display = 'flex';
+        }
+
+        function openHowToPlayFromPause() {
+            playSound(popSound);
+            document.getElementById('pauseModal').style.display = 'none';
+            document.getElementById('howToPlayScreen').style.display = 'flex';
+        }
+
+        function closeHowToPlay() {
+            playSound(popSound);
+            document.getElementById('howToPlayScreen').style.display = 'none';
+            if (isPaused) {
+                document.getElementById('pauseModal').style.display = 'flex';
+            } else {
+                document.getElementById('startOverlay').style.display = 'flex';
+            }
+        }
+
+        // ---------------- 📖 เมนูทบทวนสเกล ----------------
         function openReview() {
             playSound(popSound);
             document.getElementById('startOverlay').style.display = 'none';
