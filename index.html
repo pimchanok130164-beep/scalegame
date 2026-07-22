@@ -233,7 +233,7 @@
         }
         .demo-drop span { transform: rotate(-45deg); }
 
-        /* SVG ลูกศรชี้ */
+        /* SVG เส้นลูกศรชี้ */
         .arrow-svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; pointer-events: none; }
 
         /* กล่องข้อความลายมือชอล์ก */
@@ -298,26 +298,8 @@
             <!-- จะถูกเติมด้วย Javascript -->
         </div>
 
-        <!-- หน้าต่างเริ่มเกม -->
-        <div id="startOverlay" class="overlay-screen" style="display: flex;">
-            <h1 class="overlay-title">Scale Drip ☕</h1>
-            <div class="start-instruction-box">
-                <p style="font-size: 1.25rem; color: #2e4233; font-weight: 900; line-height: 1.5; margin-bottom:10px;">
-                    🌱 วิธีการชงกาแฟสเกล
-                </p>
-                <p style="font-size: 0.95rem; color: #5d4037; font-weight: 700;">เลื่อนถ้วยดริปไปซ้ายขวา</p>
-                <p style="font-size: 0.95rem; color: #5d4037; font-weight: 700;">เพื่อรับ <b>"หยดน้ำ"</b> โน้ตในสเกล</p>
-                <p style="font-size: 0.85rem; color: #e57373; font-weight: 700; margin-top: 10px;">
-                    ❤️ มีหัวใจให้ 3 ดวง หากรับผิดหรือปล่อยให้โน้ตที่ถูกร่วงไป หัวใจจะลด!
-                </p>
-            </div>
-            <button class="btn-action" onclick="startGame()">เริ่มดริปกาแฟ ▶</button>
-            <button class="btn-action btn-secondary" onclick="openHowToPlay()">วิธีการเล่น 📖</button>
-            <button class="btn-action btn-secondary" onclick="openReview()">ทบทวน 4 สเกล 🎼</button>
-        </div>
-
-        <!-- 📖 หน้าต่างคู่มือการเล่น (How to Play - ตามรูปภาพสเก็ตช์) -->
-        <div id="howToPlayScreen" class="overlay-screen">
+        <!-- 📖 หน้าต่างคู่มือการเล่น (How to Play) ขึ้นเป็นหน้าแรกสุด -->
+        <div id="howToPlayScreen" class="overlay-screen" style="display: flex;">
             <div class="guide-modal">
                 <div class="guide-header">
                     <span class="guide-title">คู่มือการเล่น</span>
@@ -354,7 +336,7 @@
                         มีหัวใจให้ 3 ดวง<br>หากตอบผิดหัวใจจะลด
                     </div>
 
-                    <!-- SVG เส้นลูกศรชี้ตามรูปสเก็ตช์ -->
+                    <!-- SVG เส้นลูกศรชี้ -->
                     <svg class="arrow-svg" viewBox="0 0 360 380">
                         <defs>
                             <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
@@ -368,6 +350,22 @@
                     </svg>
                 </div>
             </div>
+        </div>
+
+        <!-- หน้าต่างเริ่มเกมและทบทวน (จะขึ้นมาหลังจากปิดคู่มือ) -->
+        <div id="startOverlay" class="overlay-screen" style="display: none;">
+            <h1 class="overlay-title">Scale Drip ☕</h1>
+            <div class="start-instruction-box">
+                <p style="font-size: 1.25rem; color: #2e4233; font-weight: 900; line-height: 1.5; margin-bottom:10px;">
+                    🌱 พร้อมชงกาแฟสเกลแล้วหรือยัง?
+                </p>
+                <p style="font-size: 0.95rem; color: #5d4037; font-weight: 700;">จำให้แม่น! โน้ตในสเกลคืออะไรบ้าง</p>
+                <p style="font-size: 0.85rem; color: #e57373; font-weight: 700; margin-top: 10px;">
+                    ถ้ายังไม่แม่น แวะทบทวนสเกลก่อนได้นะ
+                </p>
+            </div>
+            <button class="btn-action" onclick="startGame()">เริ่มดริปกาแฟ ▶</button>
+            <button class="btn-action btn-secondary" onclick="openReview()">ทบทวน 4 สเกล 🎼</button>
         </div>
 
         <!-- 📖 หน้าต่างทบทวนเมนู -->
@@ -401,7 +399,6 @@
             <h1 class="overlay-title" style="color: #fff;">พักจิบชา 🍵</h1>
             <div style="display: flex; flex-direction: column; width:100%; align-items:center;">
                 <button class="btn-action" onclick="resumeGame()">▶ ลุยงานต่อ</button>
-                <button class="btn-action btn-secondary" onclick="openHowToPlayFromPause()">วิธีการเล่น 📖</button>
                 <button class="btn-action btn-secondary" onclick="openReviewFromPause()">ทบทวนสเกล 🎼</button>
                 <button class="btn-action btn-secondary" onclick="restartGame()">🔄 เททิ้งเริ่มใหม่</button>
             </div>
@@ -518,18 +515,6 @@
         window.addEventListener('touchend', handleDragEnd);
 
         // ---------------- 📖 เมนูคู่มือการเล่น (How to Play) ----------------
-        function openHowToPlay() {
-            playSound(popSound);
-            document.getElementById('startOverlay').style.display = 'none';
-            document.getElementById('howToPlayScreen').style.display = 'flex';
-        }
-
-        function openHowToPlayFromPause() {
-            playSound(popSound);
-            document.getElementById('pauseModal').style.display = 'none';
-            document.getElementById('howToPlayScreen').style.display = 'flex';
-        }
-
         function closeHowToPlay() {
             playSound(popSound);
             document.getElementById('howToPlayScreen').style.display = 'none';
